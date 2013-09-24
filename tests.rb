@@ -1,9 +1,8 @@
 require_relative './IPVikingGetter'
-require_relative './ipviking_constants'
 
-puts Ipviking_constants.constants
-
-DEFAULT_CONFIG = Ipviking_constants::DEFAULT_CONFIG
-
-ip = IPVikingGetter.new DEFAULT_CONFIG['proxy'], DEFAULT_CONFIG['apikey']
+ip = IPVikingGetter.new
 ip.makerequest('ipq', {'ip'=>'208.74.76.5'})
+ip.makerequest('riskfactor', {'riskfactorxml'=>'examples/riskfactor.xml'})
+ip.makerequest('geofilter',{'geofilterxml'=>'examples/geofilter.xml'})
+ip.makerequest('submission',{'ip'=>'208.74.76.5', 'category'=>12,'protocol'=>51})
+ip.makerequest('risk',{'ip'=>'208.74.76.5'})
