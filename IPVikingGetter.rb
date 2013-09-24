@@ -23,7 +23,6 @@ class IPVikingGetter
 
     #construct message
     httpmessage = constructmessage method, params
-    puts httpmessage.split('\r\n').join()
     #send to server
     sock.send httpmessage, 0
 
@@ -35,10 +34,9 @@ class IPVikingGetter
     response = response.split("\r\n\r\n", 2)
     body = response[1]
     if body.index('json') != nil   
-      parsed = JSON.parse(body)
-      pp(parsed)
+      return JSON.parse(body)
     else
-      pp(body)
+      return body
     end
   end
   

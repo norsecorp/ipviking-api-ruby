@@ -13,17 +13,8 @@ module CONSTANTS
   DEFAULT_CONFIG =  {
     'apikey' => SANDBOX_APIKEY, 
     'proxy' => PROXIES['SANDBOX'],
-    'output'=>'application/json'
     }
   
-  #request params
-  REQUIREDS ={
-    'submission' => ['category','protocol','ip'],
-    'geofilter'=>['geofilterxml'],
-    'riskfactor'=>['settingxml'],
-    'ipq'=>['ip'],
-    'risk'=>['ip']
-    }
   DEFAULTS={
     'accepttype'=>'application/json'
   }
