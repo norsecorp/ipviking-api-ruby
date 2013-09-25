@@ -17,12 +17,15 @@ class IPVikingGetter
   def makerequest(method, params)
     #open socket
     sock = TCPSocket.open(@proxy, 80)
+    
     #check that we've got all required args
+    return "Invalid IPViking method #{method}" if not CONSTANTS::REQUIREDS.keys.include?(method)    
     reqs = CONSTANTS::REQUIREDS[method] - (params.keys)
-    return "Missing required args: #{reqs}" if reqs.length>0
-
+    return "Missing required args: #{reqs}" if reqs.length>0    
+    
     #construct message
     httpmessage = constructmessage method, params
+    
     #send to server
     sock.send httpmessage, 0
 
@@ -32,8 +35,9 @@ class IPVikingGetter
     
     #parse response
     response = response.split("\r\n\r\n", 2)
+    heads = response[0]
     body = response[1]
-    if body.index('json') != nil   
+    if heads.index('application/json') != nil   
       return JSON.parse(body)
     else
       return body
@@ -46,35 +50,17 @@ class IPVikingGetter
     params['method']=method
     accepttype = params['accepttype'] == nil ? CONSTANTS::DEFAULTS['accepttype'] : params['accepttype']
     
-    puts "ACCEPT: #{accepttype}"
-    #check our requirements for each method
-    case method
-    when 'ipq'
-      verb='POST'
-      raise "You must provide a valid IP address." if params['ip'] == nil
-    when 'riskfactor'
-      verb='POST'
-      xml = params['settingsxml']
-      raise "You must provide a valid settings xml file." if xml == nil
-      xml = open(xml).read()
-      params['settingsxml']=xml
-    when 'geofilter'
-      verb='POST'
-      xml = params['geofilterxml']
-      raise "You must provide a valid geofilter xml file." if xml == nil
-      xml = open(xml).read()
-      params['geofilterxml']=xml
-    when 'submission'
-      verb='PUT'
-      raise "You must provide a valid IP address." if params['ip'] == nil
-      raise "You must provide a valid category." if params['category'] == nil
-      raise "You must provide a valid protocol." if params['protocol'] == nil
-    when 'risk'
-      verb='POST'
-      raise "You must provide a valid IP address." if params['ip'] == nil
-    else
-       raise "Invalid IPViking method. Must be ipq, riskfactor, geofilter, submission, or risk."
+    #load xmls if riskfactor or geofilter
+    if params.keys.include?('riskfactorxml')
+      params['riskfactorxml']=open(params['riskfactorxml']).read()
     end
+    if params.keys.include?('geofilterxml')
+      params['geofilterxml']=open(params['geofilterxml']).read()  
+    end
+    
+    #assign verb
+    verb = method!='submission' ? "POST" : "PUT"
+    
     #prepare message
     body = URI.encode_www_form(params)    
     heads = ["#{verb} http://#{@proxy}/api/ HTTP/1.1",

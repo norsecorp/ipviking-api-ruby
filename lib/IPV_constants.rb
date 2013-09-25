@@ -19,4 +19,12 @@ module CONSTANTS
     'accepttype'=>'application/json'
   }
   
+  REQUIREDS={
+    'ipq'=>['ip'],
+    'risk'=>['ip'],
+    'geofilter'=>['geofilterxml'],
+    'riskfactor'=>['riskfactorxml'],
+    'submission'=>['ip','category','protocol']    
+  }
+  
 end
